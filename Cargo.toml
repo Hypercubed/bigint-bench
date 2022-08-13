@@ -5,3 +5,12 @@ edition = "2021"
 
 [dependencies]
 num-bigint = "0.4"
+num = "0.4"
+
+[[bin]]
+name = "fact"
+path = "rust/fact.rs"
+
+[[bin]]
+name = "pow"
+path = "rust/pow.rs"

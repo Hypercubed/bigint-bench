@@ -1,96 +1,119 @@
-version = 0.1
 default-task = 'build'
+version = 0.1
 
 [[task]]
+deps = [':cpp:', ':go:', ':dart:', ':ghc:', ':racket:', ':deno:', ':rust:']
 name = 'build'
-deps = ['build:cpp', 'build:go', 'build:dart', 'build:ghc', 'build:racket', 'build:deno', 'build:rust' ]
 
 [[task]]
-name = 'build:cpp'
-target = './build/#-cpp'
-dep = '#.cpp'
+dep = 'cpp/#.cpp'
+name = 'cpp:#'
 run = '''
 g++ $DEP -std=c++11 -o $TARGET -O2 -lgmp
 '''
+target = './build/#-cpp'
 
 [[task]]
-name = 'build:go'
-target = './build/#-go'
-dep = '#.go'
+dep = 'go/#.go'
+name = 'go:#'
 run = '''
   go build -o $TARGET $DEP
 '''
+target = './build/#-go'
 
 [[task]]
-name = 'build:dart'
-target = './build/#-dart.exe'
-dep = '#.dart'
+dep = 'dart/#.dart'
+name = 'dart:#'
 run = '''
   dart compile exe $DEP -o $TARGET
 '''
+target = './build/#-dart.exe'
 
 [[task]]
-name = 'build:ghc'
-target = './build/#-ghc'
-dep = '#.hs'
+dep = 'haskell/#.hs'
+name = 'ghc:#'
 run = '''
   ghc -outputdir ./build $DEP -o $TARGET
 '''
+target = './build/#-ghc'
 
 [[task]]
-name = 'build:racket'
-target = './build/#-racket'
-dep = '#.rkt'
+dep = 'racket/#.rkt'
+name = 'racket:#'
 run = '''
   raco exe -o $TARGET $DEP
 '''
+target = './build/#-racket'
 
 [[task]]
-name = 'build:deno'
-target = './build/#-deno'
-dep = '#.ts'
+dep = 'ts/#.ts'
+name = 'deno:#'
 run = '''
   deno compile --unstable --allow-env --allow-read -o $TARGET $DEP
 '''
+target = './build/#-deno'
 
 [[task]]
-name = 'build:rust'
-target = './target/release/bigint-bench'
-dep = '#.rs'
+dep = 'rust/#.rs'
+name = 'rust:#'
 run = '''
-  cargo build --release
+  cargo build --release --bin $MATCH
+  cp ./rust/target/release/$MATCH ./build/$MATCH-rust
+'''
+target = './build/#-rust'
+
+[[task]]
+name = 'bench:fact'
+deps = [':cpp:fact', ':go:fact', ':dart:fact', ':ghc:fact', ':racket:fact', ':deno:fact', ':rust:fact']
+invalidation = 'always'
+serial = true
+validation = 'none'
+run = '''
+  hyperfine --warmup 3 -iN\
+    --export-markdown fact.md\
+    './build/fact-cpp'\
+    './build/fact-rust'\
+    './build/fact-go'\
+    'bc ./bc/fact.bc'\
+    'bun ./js/fact.js'\
+    'bun ./ts/fact.ts'\
+    './build/fact-deno'\
+    'deno run ./js/fact.js'\
+    'deno run ./ts/fact.ts'\
+    './build/fact-ghc'\
+    'python3 ./python/fact.py'\
+    'node ./js/fact.js'\
+    './build/fact-racket'\
+    'ruby ./ruby/fact.rb'\
+    'racket ./racket/fact.rkt'\
+    'cargo run --bin fact'\
+    'julia ./julia/fact.jl'\
+    'go run go/fact.go'\
+    'runhaskell haskell/fact.hs'\
+    './build/fact-dart.exe'\
+    'dart ./dart/fact.dart'\
+    'ts-node ./ts/fact.ts'\
+    'wolframscript ./wolfram/fact.wls'\
+    'tsx ./ts/fact.ts'\
 '''
 
 [[task]]
-name = 'bench'
-dep = 'build'
-validation = 'none'
+name = 'bench:pow'
+deps = [':cpp:pow', ':deno:pow', ':rust:pow']
 invalidation = 'always'
 serial = true
+validation = 'none'
 run = '''
   hyperfine --warmup 3 -iN\
-    --export-markdown benchmarks.md\
-    './build/fact-cpp' -n 'c++'\
-    './target/release/bigint-bench' -n 'rust (compiled)'\
-    './build/fact-go' -n 'go (compiled)'\
-    'bc ./fact.bc --quiet' -n 'bc'\
-    'bun ./fact.js' -n 'bun (JavaScript)'\
-    'bun ./fact.ts' -n 'bun (TypeScript)'\
-    './build/fact-deno' -n 'deno (compiled)'\
-    'deno run ./fact.js' -n 'deno (JavaScript)'\
-    'deno run ./fact.ts' -n 'deno (TypeScript)'\
-    './build/fact-ghc' -n 'haskell (compiled)'\
-    'python3 ./fact.py' -n 'python3'\
-    'node ./fact.js' -n 'node (JavaScript)'\
-    './build/fact-racket' -n 'racket (compiled)'\
-    'ruby ./fact.rb' -n 'ruby'\
-    'racket ./fact.rkt' -n 'racket'\
-    'cargo run' -n 'rust'\
-    'julia ./fact.jl' -n 'julia'\
-    'go run fact.go' -n 'go'\
-    'runhaskell fact.hs' -n 'haskell'\
-    'dart ./fact.dart' -n 'dart'\
-    'dart ./fact.dart' -n 'dart (compiled)'\
-    'ts-node ./fact.ts' -n 'ts-node (TypeScript)'\
-    'wolframscript ./fact.wls' -n 'wolframscript'\
+    --export-markdown pow.md\
+    './build/pow-cpp'\
+    './build/pow-rust'\
+    'bun ./js/pow.js'\
+    'bun ./ts/pow.ts'\
+    './build/pow-deno'\
+    'deno run ./js/pow.js'\
+    'deno run ./ts/pow.ts'\
+    'node ./js/pow.js'\
+    'ts-node ./ts/pow.ts'\
+    'tsx ./ts/pow.ts'\
 '''

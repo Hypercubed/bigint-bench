@@ -1,0 +1,1 @@
+console.log(5n**4n**3n**2n % (10n ** 20n))
