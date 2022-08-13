@@ -6,61 +6,69 @@ deps = [':cpp:', ':go:', ':dart:', ':ghc:', ':racket:', ':deno:', ':rust:']
 name = 'build'
 
 [[task]]
-dep = 'cpp/#.cpp'
 name = 'cpp:#'
+dep = 'cpp/#.cpp'
+target = './build/#-cpp'
 run = '''
 g++ $DEP -std=c++11 -o $TARGET -O2 -lgmp
 '''
-target = './build/#-cpp'
 
 [[task]]
-dep = 'go/#.go'
 name = 'go:#'
+dep = 'go/#.go'
+target = './build/#-go'
 run = '''
   go build -o $TARGET $DEP
 '''
-target = './build/#-go'
 
 [[task]]
-dep = 'dart/#.dart'
 name = 'dart:#'
+dep = 'dart/#.dart'
+target = './build/#-dart.exe'
 run = '''
   dart compile exe $DEP -o $TARGET
 '''
-target = './build/#-dart.exe'
 
 [[task]]
-dep = 'haskell/#.hs'
 name = 'ghc:#'
+dep = 'haskell/#.hs'
+target = './build/#-ghc'
 run = '''
   ghc -outputdir ./build $DEP -o $TARGET
 '''
-target = './build/#-ghc'
 
 [[task]]
-dep = 'racket/#.rkt'
 name = 'racket:#'
+dep = 'racket/#.rkt'
+target = './build/#-racket'
 run = '''
   raco exe -o $TARGET $DEP
 '''
-target = './build/#-racket'
 
 [[task]]
-dep = 'ts/#.ts'
 name = 'deno:#'
+dep = 'ts/#.ts'
+target = './build/#-deno'
 run = '''
   deno compile --unstable --allow-env --allow-read -o $TARGET $DEP
 '''
-target = './build/#-deno'
 
 [[task]]
-dep = 'rust/#.rs'
 name = 'rust:#'
+dep = 'rust/#.rs'
+target = './build/#-rust'
 run = '''
   cargo build --release --bin $MATCH
   cp ./rust/target/release/$MATCH ./build/$MATCH-rust
 '''
-target = './build/#-rust'
+
+[[task]]
+name = 'odin:#'
+dep = 'odin/#.odin'
+target = './build/#-odin'
+run = '''
+  odin build $DEP -file -out:$TARGET
+'''
 
 [[task]]
 name = 'bench:fact'
@@ -100,22 +108,24 @@ run = '''
 
 [[task]]
 name = 'bench:pow'
-deps = [':cpp:pow', ':deno:pow', ':rust:pow']
+deps = [':cpp:pow', ':deno:pow', ':rust:pow', ':odin:pow']
 invalidation = 'always'
 serial = true
 validation = 'none'
 run = '''
-  hyperfine --warmup 3 -iN\
+  hyperfine --warmup 3 -i -N\
     --export-markdown pow.md\
     './build/pow-cpp'\
     './build/pow-rust'\
-    'bc ./bc/pow.bc'\
-    'bun ./js/pow.js'\
-    'bun ./ts/pow.ts'\
     './build/pow-deno'\
     'deno run ./js/pow.js'\
     'deno run ./ts/pow.ts'\
     'node ./js/pow.js'\
-    'ts-node ./ts/pow.ts'\
     'tsx ./ts/pow.ts'\
+    'bun ./js/pow.js'\
+    'bun ./ts/pow.ts'\
+    './build/pow-odin'\
+    'ts-node ./ts/pow.ts'\
+    'bc ./bc/pow.bc'\
+    'odin run ./odin/pow.odin -file -out:./build/fact-odin'
 '''
