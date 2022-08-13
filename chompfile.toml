@@ -1,0 +1,96 @@
+version = 0.1
+default-task = 'build'
+
+[[task]]
+name = 'build'
+deps = ['build:cpp', 'build:go', 'build:dart', 'build:ghc', 'build:racket', 'build:deno', 'build:rust' ]
+
+[[task]]
+name = 'build:cpp'
+target = './build/#-cpp'
+dep = '#.cpp'
+run = '''
+g++ $DEP -std=c++11 -o $TARGET -O2 -lgmp
+'''
+
+[[task]]
+name = 'build:go'
+target = './build/#-go'
+dep = '#.go'
+run = '''
+  go build -o $TARGET $DEP
+'''
+
+[[task]]
+name = 'build:dart'
+target = './build/#-dart.exe'
+dep = '#.dart'
+run = '''
+  dart compile exe $DEP -o $TARGET
+'''
+
+[[task]]
+name = 'build:ghc'
+target = './build/#-ghc'
+dep = '#.hs'
+run = '''
+  ghc -outputdir ./build $DEP -o $TARGET
+'''
+
+[[task]]
+name = 'build:racket'
+target = './build/#-racket'
+dep = '#.rkt'
+run = '''
+  raco exe -o $TARGET $DEP
+'''
+
+[[task]]
+name = 'build:deno'
+target = './build/#-deno'
+dep = '#.ts'
+run = '''
+  deno compile --unstable --allow-env --allow-read -o $TARGET $DEP
+'''
+
+[[task]]
+name = 'build:rust'
+target = './target/release/bigint-bench'
+dep = '#.rs'
+run = '''
+  cargo build --release
+'''
+
+[[task]]
+name = 'bench'
+dep = 'build'
+validation = 'none'
+invalidation = 'always'
+serial = true
+run = '''
+  hyperfine --warmup 3 -iN\
+    --export-markdown benchmarks.md\
+    './build/fact-cpp' -n 'c++'\
+    './target/release/bigint-bench' -n 'rust (compiled)'\
+    './build/fact-go' -n 'go (compiled)'\
+    'bc ./fact.bc --quiet' -n 'bc'\
+    'bun ./fact.js' -n 'bun (JavaScript)'\
+    'bun ./fact.ts' -n 'bun (TypeScript)'\
+    './build/fact-deno' -n 'deno (compiled)'\
+    'deno run ./fact.js' -n 'deno (JavaScript)'\
+    'deno run ./fact.ts' -n 'deno (TypeScript)'\
+    './build/fact-ghc' -n 'haskell (compiled)'\
+    'python3 ./fact.py' -n 'python3'\
+    'node ./fact.js' -n 'node (JavaScript)'\
+    './build/fact-racket' -n 'racket (compiled)'\
+    'ruby ./fact.rb' -n 'ruby'\
+    'racket ./fact.rkt' -n 'racket'\
+    'cargo run' -n 'rust'\
+    'julia ./fact.jl' -n 'julia'\
+    'go run fact.go' -n 'go'\
+    'runhaskell fact.hs' -n 'haskell'\
+    'dart ./fact.dart' -n 'dart'\
+    'dart ./fact.dart' -n 'dart (compiled)'\
+    'ts-node ./fact.ts' -n 'ts-node (TypeScript)'\
+    'wolframscript ./fact.wls' -n 'wolframscript'\
+'''
