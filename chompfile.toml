@@ -127,5 +127,6 @@ run = '''
     './build/pow-odin'\
     'ts-node ./ts/pow.ts'\
     'bc ./bc/pow.bc'\
+    'R -f ./r/pow.r -q'\
     'odin run ./odin/pow.odin -file -out:./build/fact-odin'
 '''
