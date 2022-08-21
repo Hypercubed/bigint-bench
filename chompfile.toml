@@ -71,6 +71,12 @@ run = '''
 '''
 
 [[task]]
+name = 'bench'
+deps = [':bench:fact', ':bench:pow', ':bench:hello']
+serial = true
+validation = 'none'
+
+[[task]]
 name = 'bench:fact'
 deps = [':cpp:fact', ':go:fact', ':dart:fact', ':ghc:fact', ':racket:fact', ':deno:fact', ':rust:fact']
 invalidation = 'always'
@@ -79,31 +85,32 @@ validation = 'none'
 run = '''
   hyperfine --warmup 3 -iN\
     --export-markdown fact.md\
+    --export-csv fact.csv\
     './build/fact-cpp'\
     './build/fact-rust'\
     './build/fact-go'\
+    './build/fact-ghc'\
+    './build/fact-deno'\
+    './build/fact-racket'\
+    './build/fact-dart.exe'\
     'bc ./bc/fact.bc'\
     'bun ./js/fact.js'\
     'bun ./ts/fact.ts'\
-    './build/fact-deno'\
     'deno run ./js/fact.js'\
     'deno run ./ts/fact.ts'\
-    './build/fact-ghc'\
-    'python3 ./python/fact.py'\
     'node ./js/fact.js'\
-    './build/fact-racket'\
+    'tsx ./ts/fact.ts'\
+    'python3 ./python/fact.py'\
     'ruby ./ruby/fact.rb'\
     'racket ./racket/fact.rkt'\
-    'cargo run --bin fact'\
-    'julia ./julia/fact.jl'\
-    'go run go/fact.go'\
-    'runhaskell haskell/fact.hs'\
-    './build/fact-dart.exe'\
-    'dart ./dart/fact.dart'\
-    'ts-node ./ts/fact.ts'\
-    'wolframscript ./wolfram/fact.wls'\
-    'wolframscript -cloud ./wolfram/fact.wls'\
-    'tsx ./ts/fact.ts'\
+    # 'cargo run --bin fact'\
+    # 'julia ./julia/fact.jl'\
+    # 'go run go/fact.go'\
+    # 'runhaskell haskell/fact.hs'\
+    # 'dart ./dart/fact.dart'\
+    # 'ts-node ./ts/fact.ts'\
+    # 'wolframscript ./wolfram/fact.wls'\
+    # 'wolframscript -cloud ./wolfram/fact.wls'
 '''
 
 [[task]]
@@ -115,18 +122,47 @@ validation = 'none'
 run = '''
   hyperfine --warmup 3 -i -N\
     --export-markdown pow.md\
+    --export-csv pow.csv\
     './build/pow-cpp'\
     './build/pow-rust'\
     './build/pow-deno'\
+    './build/pow-odin'\
+    'bc ./bc/pow.bc'\
+    'bun ./js/pow.js'\
+    'bun ./ts/pow.ts'\
     'deno run ./js/pow.js'\
     'deno run ./ts/pow.ts'\
     'node ./js/pow.js'\
     'tsx ./ts/pow.ts'\
-    'bun ./js/pow.js'\
-    'bun ./ts/pow.ts'\
-    './build/pow-odin'\
     'ts-node ./ts/pow.ts'\
-    'bc ./bc/pow.bc'\
     'R -f ./r/pow.r -q'\
-    'odin run ./odin/pow.odin -file -out:./build/fact-odin'
+    # 'odin run ./odin/pow.odin -file -out:./build/pow-odin'
+'''
+
+[[task]]
+name = 'bench:hello'
+deps = [':cpp:hello', ':rust:hello', ':deno:hello', ':racket:hello', ':go:hello', ':ghc:hello']
+invalidation = 'always'
+serial = true
+validation = 'none'
+run = '''
+  hyperfine --warmup 3 -i -N\
+    --export-markdown hello.md\
+    --export-csv hello.csv\
+    './build/hello-cpp'\
+    './build/hello-rust'\
+    './build/hello-go'\
+    './build/hello-ghc'\
+    './build/hello-deno'\
+    './build/hello-racket'\
+    'bc ./bc/hello.bc'\
+    'bun ./js/hello.js'\
+    'bun ./ts/hello.ts'\
+    'deno run ./js/hello.js'\
+    'deno run ./ts/hello.ts'\
+    'node ./js/hello.js'\
+    'tsx ./ts/hello.ts'\
+    'python3 ./python/hello.py'\
+    'ruby ./ruby/hello.rb'\
+    'racket ./racket/hello.rkt'
 '''
