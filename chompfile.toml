@@ -71,6 +71,15 @@ run = '''
 '''
 
 [[task]]
+name = 'zig:#'
+dep = 'zig/#.zig'
+target = './build/#-zig'
+run = '''
+zig build-exe $DEP -lc
+mv $MATCH ./build/$MATCH-zig
+'''
+
+[[task]]
 name = 'bench'
 deps = [':bench:fact', ':bench:pow', ':bench:hello']
 serial = true
@@ -78,7 +87,7 @@ validation = 'none'
 
 [[task]]
 name = 'bench:fact'
-deps = [':cpp:fact', ':go:fact', ':dart:fact', ':ghc:fact', ':racket:fact', ':deno:fact', ':rust:fact']
+deps = [':cpp:fact', ':go:fact', ':dart:fact', ':ghc:fact', ':racket:fact', ':deno:fact', ':rust:fact', ':zig:fact']
 invalidation = 'always'
 serial = true
 validation = 'none'
@@ -86,6 +95,7 @@ run = '''
   hyperfine --warmup 3 -iN\
     --export-markdown fact.md\
     --export-csv fact.csv\
+    --export-json fact.json\
     './build/fact-cpp'\
     './build/fact-rust'\
     './build/fact-go'\
@@ -93,6 +103,7 @@ run = '''
     './build/fact-deno'\
     './build/fact-racket'\
     './build/fact-dart.exe'\
+    './build/fact-zig'\
     'bc ./bc/fact.bc'\
     'bun ./js/fact.js'\
     'bun ./ts/fact.ts'\
@@ -115,7 +126,7 @@ run = '''
 
 [[task]]
 name = 'bench:pow'
-deps = [':cpp:pow', ':deno:pow', ':rust:pow', ':odin:pow']
+deps = [':cpp:pow', ':deno:pow', ':rust:pow', ':odin:pow', ':zig:pow']
 invalidation = 'always'
 serial = true
 validation = 'none'
@@ -127,6 +138,7 @@ run = '''
     './build/pow-rust'\
     './build/pow-deno'\
     './build/pow-odin'\
+    './build/pow-zig'\
     'bc ./bc/pow.bc'\
     'bun ./js/pow.js'\
     'bun ./ts/pow.ts'\
@@ -141,7 +153,7 @@ run = '''
 
 [[task]]
 name = 'bench:hello'
-deps = [':cpp:hello', ':rust:hello', ':deno:hello', ':racket:hello', ':go:hello', ':ghc:hello']
+deps = [':cpp:hello', ':rust:hello', ':deno:hello', ':racket:hello', ':go:hello', ':ghc:hello', ':zig:hello', ':dart:hello']
 invalidation = 'always'
 serial = true
 validation = 'none'
@@ -149,12 +161,14 @@ run = '''
   hyperfine --warmup 3 -i -N\
     --export-markdown hello.md\
     --export-csv hello.csv\
+    './build/hello-zig'\
     './build/hello-cpp'\
     './build/hello-rust'\
     './build/hello-go'\
     './build/hello-ghc'\
     './build/hello-deno'\
     './build/hello-racket'\
+    './build/hello-dart.exe'\
     'bc ./bc/hello.bc'\
     'bun ./js/hello.js'\
     'bun ./ts/hello.ts'\
