@@ -126,17 +126,23 @@ run = '''
 
 [[task]]
 name = 'bench:pow'
-deps = [':cpp:pow', ':deno:pow', ':rust:pow', ':odin:pow', ':zig:pow']
+deps = [
+  ':cpp:pow',
+  ':deno:pow',
+  ':rust:pow',
+  ':odin:pow',
+  ':zig:pow'
+]
 invalidation = 'always'
 serial = true
 validation = 'none'
 run = '''
-  hyperfine --warmup 3 -i -N\
+  hyperfine --warmup 3\
     --export-markdown pow.md\
     --export-csv pow.csv\
-    './build/pow-cpp'\
-    './build/pow-rust'\
-    './build/pow-deno'\
+    './build/pow-cpp' \
+    './build/pow-rust' \
+    './build/pow-deno' \
     './build/pow-odin'\
     './build/pow-zig'\
     'bc ./bc/pow.bc'\
@@ -148,7 +154,7 @@ run = '''
     'tsx ./ts/pow.ts'\
     'ts-node ./ts/pow.ts'\
     'R -f ./r/pow.r -q'\
-    # 'odin run ./odin/pow.odin -file -out:./build/pow-odin'
+    'elixir ./elixir/pow.exs'
 '''
 
 [[task]]
@@ -178,5 +184,6 @@ run = '''
     'tsx ./ts/hello.ts'\
     'python3 ./python/hello.py'\
     'ruby ./ruby/hello.rb'\
-    'racket ./racket/hello.rkt'
+    'racket ./racket/hello.rkt'\
+    'elixir ./elixir/hello.exs'
 '''
