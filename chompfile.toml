@@ -92,7 +92,7 @@ invalidation = 'always'
 serial = true
 validation = 'none'
 run = '''
-  hyperfine --warmup 3 -iN\
+  hyperfine --warmup 3 -N\
     --export-markdown fact.md\
     --export-csv fact.csv\
     --export-json fact.json\
@@ -114,6 +114,7 @@ run = '''
     'python3 ./python/fact.py'\
     'ruby ./ruby/fact.rb'\
     'racket ./racket/fact.rkt'\
+    'elixir ./elixir/fact.exs'\
     # 'cargo run --bin fact'\
     # 'julia ./julia/fact.jl'\
     # 'go run go/fact.go'\
@@ -137,7 +138,7 @@ invalidation = 'always'
 serial = true
 validation = 'none'
 run = '''
-  hyperfine --warmup 3\
+  hyperfine --warmup 3 -N\
     --export-markdown pow.md\
     --export-csv pow.csv\
     './build/pow-cpp' \
@@ -164,7 +165,7 @@ invalidation = 'always'
 serial = true
 validation = 'none'
 run = '''
-  hyperfine --warmup 3 -i -N\
+  hyperfine --warmup 3 -N\
     --export-markdown hello.md\
     --export-csv hello.csv\
     './build/hello-zig'\
