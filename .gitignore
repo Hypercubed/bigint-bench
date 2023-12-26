@@ -1,3 +1,4 @@
 /build
 /rust/target
 /zig/zig-cache
+*.o

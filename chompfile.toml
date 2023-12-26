@@ -6,6 +6,10 @@ deps = [':cpp:', ':go:', ':dart:', ':ghc:', ':racket:', ':deno:', ':rust:']
 name = 'build'
 
 [[task]]
+name = 'clean'
+run = 'rm -rf ./build'
+
+[[task]]
 name = 'cpp:#'
 dep = 'cpp/#.cpp'
 target = './build/#-cpp'
@@ -80,6 +84,15 @@ mv $MATCH ./build/$MATCH-zig
 '''
 
 [[task]]
+name = 'asc:#'
+dep = 'asc/assembly/#.ts'
+target = './build/#.wasm'
+run = '''
+cd asc
+asc ./assembly/$MATCH.ts --outFile ../build/$MATCH.wasm
+'''
+
+[[task]]
 name = 'bench'
 deps = [':bench:fact', ':bench:pow', ':bench:hello']
 serial = true
@@ -87,7 +100,17 @@ validation = 'none'
 
 [[task]]
 name = 'bench:fact'
-deps = [':cpp:fact', ':go:fact', ':dart:fact', ':ghc:fact', ':racket:fact', ':deno:fact', ':rust:fact', ':zig:fact']
+deps = [
+  ':cpp:fact',
+  ':go:fact',
+  ':dart:fact',
+  ':ghc:fact',
+  ':racket:fact',
+  ':deno:fact',
+  ':rust:fact',
+  ':zig:fact',
+  ':asc:fact'
+]
 invalidation = 'always'
 serial = true
 validation = 'none'
@@ -104,6 +127,7 @@ run = '''
     './build/fact-racket'\
     './build/fact-dart.exe'\
     './build/fact-zig'\
+    'wasmtime ./build/fact.wasm'\
     'bc ./bc/fact.bc'\
     'bun ./js/fact.js'\
     'bun ./ts/fact.ts'\
@@ -131,8 +155,9 @@ deps = [
   ':cpp:pow',
   ':deno:pow',
   ':rust:pow',
-  ':odin:pow',
-  ':zig:pow'
+  # ':odin:pow',
+  ':zig:pow',
+  ':asc:pow'
 ]
 invalidation = 'always'
 serial = true
@@ -144,8 +169,8 @@ run = '''
     './build/pow-cpp' \
     './build/pow-rust' \
     './build/pow-deno' \
-    './build/pow-odin'\
     './build/pow-zig'\
+    'wasmtime ./build/pow.wasm'\
     'bc ./bc/pow.bc'\
     'bun ./js/pow.js'\
     'bun ./ts/pow.ts'\
@@ -156,11 +181,12 @@ run = '''
     'ts-node ./ts/pow.ts'\
     'R -f ./r/pow.r -q'\
     'elixir ./elixir/pow.exs'
+    # './build/pow-odin'\
 '''
 
 [[task]]
 name = 'bench:hello'
-deps = [':cpp:hello', ':rust:hello', ':deno:hello', ':racket:hello', ':go:hello', ':ghc:hello', ':zig:hello', ':dart:hello']
+deps = [':cpp:hello', ':rust:hello', ':deno:hello', ':racket:hello', ':go:hello', ':ghc:hello', ':zig:hello', ':dart:hello', ':asc:hello']
 invalidation = 'always'
 serial = true
 validation = 'none'
@@ -176,6 +202,7 @@ run = '''
     './build/hello-deno'\
     './build/hello-racket'\
     './build/hello-dart.exe'\
+    'wasmtime ./build/hello.wasm'\
     'bc ./bc/hello.bc'\
     'bun ./js/hello.js'\
     'bun ./ts/hello.ts'\
