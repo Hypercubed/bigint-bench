@@ -11,6 +11,7 @@
     "assemblyscript": "^0.27.22"
   },
   "dependencies": {
-    "@hypercubed/as-mpz": "^0.0.2"
+    "@hypercubed/as-mpz": "^2.2.0",
+    "as-bigint": "^0.5.3"
   }
 }

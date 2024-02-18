@@ -1,4 +1,4 @@
-default-task = 'build'
+default-task = 'bench'
 version = 0.1
 
 [[task]]
@@ -85,7 +85,7 @@ mv $MATCH ./build/$MATCH-zig
 
 [[task]]
 name = 'asc:#'
-dep = 'asc/assembly/#.ts'
+deps = ['asc/assembly/#.ts', 'asc/node_modules/@hypercubed/as-mpz/assembly/index.ts']
 target = './build/#.wasm'
 run = '''
 cd asc
@@ -109,7 +109,8 @@ deps = [
   ':deno:fact',
   ':rust:fact',
   ':zig:fact',
-  ':asc:fact'
+  ':asc:fact-mpz',
+  ':asc:fact-bigint',
 ]
 invalidation = 'always'
 serial = true
@@ -127,7 +128,8 @@ run = '''
     './build/fact-racket'\
     './build/fact-dart.exe'\
     './build/fact-zig'\
-    'wasmtime ./build/fact.wasm'\
+    'wasmtime ./build/fact-mpz.wasm'\
+    'wasmtime ./build/fact-bigint.wasm'\
     'bc ./bc/fact.bc'\
     'bun ./js/fact.js'\
     'bun ./ts/fact.ts'\
@@ -138,7 +140,9 @@ run = '''
     'python3 ./python/fact.py'\
     'ruby ./ruby/fact.rb'\
     'racket ./racket/fact.rkt'\
-    'elixir ./elixir/fact.exs'\
+    'elixir ./elixir/fact.exs'
+    # 'iwasm --stack-size=512000 ./build/fact.wasm'\
+    # 'wasmer run ./build/fact.wasm'\
     # 'cargo run --bin fact'\
     # 'julia ./julia/fact.jl'\
     # 'go run go/fact.go'\
@@ -157,7 +161,7 @@ deps = [
   ':rust:pow',
   # ':odin:pow',
   ':zig:pow',
-  ':asc:pow'
+  ':asc:pow-mpz',
 ]
 invalidation = 'always'
 serial = true
@@ -170,7 +174,7 @@ run = '''
     './build/pow-rust' \
     './build/pow-deno' \
     './build/pow-zig'\
-    'wasmtime ./build/pow.wasm'\
+    'wasmtime ./build/pow-mpz.wasm'\
     'bc ./bc/pow.bc'\
     'bun ./js/pow.js'\
     'bun ./ts/pow.ts'\
@@ -181,6 +185,9 @@ run = '''
     'ts-node ./ts/pow.ts'\
     'R -f ./r/pow.r -q'\
     'elixir ./elixir/pow.exs'
+    # 'wasmtime ./build/pow-bigint.wasm'\
+    # 'iwasm ./build/pow.wasm'\
+    # 'wasmer run ./build/pow.wasm'\
     # './build/pow-odin'\
 '''
 
@@ -203,6 +210,8 @@ run = '''
     './build/hello-racket'\
     './build/hello-dart.exe'\
     'wasmtime ./build/hello.wasm'\
+    'iwasm ./build/hello.wasm'\
+    'wasmer run ./build/hello.wasm'\
     'bc ./bc/hello.bc'\
     'bun ./js/hello.js'\
     'bun ./ts/hello.ts'\

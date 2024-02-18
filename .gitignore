@@ -2,3 +2,4 @@
 /rust/target
 /zig/zig-cache
 *.o
+asc/node_modules/
